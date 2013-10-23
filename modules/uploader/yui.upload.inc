@@ -15,13 +15,13 @@ function yui_uploader_upload_file() {
   foreach ($_FILES as $data) {
     if($data['error'] == 0) {
       $file = yui_uploader_save_uploaded_file($form_build_id, $data);
-      if($file !== FALSE) {
+      if($file !== FALSE) { 
         yui_uploader_store_uploaded_file($form_build_id, $file);
       }
     } // @TODO log/display error to the user.
   }
   echo ' ';
-  exit();
+  exit(); //Not Sure about this? Debug by Dong
 }
 
 /**
@@ -47,20 +47,21 @@ function yui_uploader_save_uploaded_file($form_build_id, array $data) {
   return FALSE;
 }
 
+
 /**
  * Stores the uploaded file in the form_state.
  */
 function yui_uploader_store_uploaded_file($form_build_id, stdClass $file) {
   $form_state = array('storage' => NULL, 'submitted' => FALSE, 'post' => $_POST);
-  if(lock_acquire('yui_upload_file')) {
+  while(!lock_acquire('yui_upload_file')) {sleep(1);}; 
     $form = form_get_cache($form_build_id, $form_state);
     if (isset($form)) {
       $form_state['storage']['yui_uploader'][] = $file;
       form_set_cache($form_build_id, $form, $form_state);
-    }
+   }
     lock_release('yui_upload_file');
-  }
 }
+
 
 /**
  * Because of limitiations on flash we have to restore the session from a POST
