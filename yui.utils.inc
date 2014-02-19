@@ -105,7 +105,9 @@ function yui_add_file($file) {
   }
   if(!isset($exported_globals)) {
     $compression_type = variable_get('yui_compression_type', YUI_MIN_COMPRESSION);
-    drupal_add_js(array('yui' => array('config' => array('filter' => $compression_type))), 'setting');
+    //drupal_add_js(array('yui' => array('config' => array('filter' => $compression_type))), 'setting');
+    $base = url('sites/all/libraries/yui/build/', array('absolute' => true));
+    drupal_add_js(array('yui' => array('config' => array('filter' => $compression_type, 'base' => $base, 'combine' => FALSE))), 'setting');
     drupal_add_js(drupal_get_path('module', 'yui') . '/js/yui-drupal-config.js');
     $exported_globals = TRUE;
   }
